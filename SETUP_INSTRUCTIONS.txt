@@ -1,0 +1,135 @@
+BOOKFORGE AI - SETUP AND RUN INSTRUCTIONS
+
+PREREQUISITES:
+- Python 3.8 or higher installed
+- pip package manager
+- Gemini API key from Google Cloud Console (https://makersuite.google.com/app/apikey)
+
+SETUP STEPS:
+
+1. Extract the project files to your desired location.
+
+2. Navigate to the project root directory in terminal/PowerShell.
+
+3. Create and activate a Python virtual environment (optional but recommended):
+   On Windows:
+   python -m venv venv
+   .\venv\Scripts\Activate.ps1
+   
+   On macOS/Linux:
+   python3 -m venv venv
+   source venv/bin/activate
+
+4. Install dependencies:
+   pip install -r requirements.txt
+
+5. Set the Gemini API key environment variable:
+   On Windows PowerShell:
+   $env:GEMINI_API_KEY = "your-gemini-api-key-here"
+   
+   On Windows Command Prompt:
+   set GEMINI_API_KEY=your-gemini-api-key-here
+   
+   On macOS/Linux:
+   export GEMINI_API_KEY="your-gemini-api-key-here"
+
+RUN INSTRUCTIONS:
+
+Option A: Run locally with both backend and frontend on localhost
+
+1. Open terminal/PowerShell and navigate to the project root directory.
+
+2. Start the backend server:
+   python backend/main.py
+   
+   The backend will start on http://localhost:8000
+   You can verify with: curl http://localhost:8000/health
+
+3. Open another terminal/PowerShell window in the project root directory and activate the virtual environment if used.
+
+4. Start the frontend application:
+   streamlit run frontend/app.py
+   
+   The frontend will automatically open in your browser at http://localhost:8501
+
+5. Use the UI to:
+   - Enter a book topic
+   - Generate an outline
+   - Generate full book content
+   - Export as PDF or DOCX
+
+Option B: Run with custom backend URL (for deployed backend)
+
+1. Set the backend URL before running Streamlit:
+   On Windows PowerShell:
+   $env:BACKEND_URL = "https://your-backend-url.com"
+   streamlit run frontend/app.py
+   
+   On Windows Command Prompt:
+   set BACKEND_URL=https://your-backend-url.com
+   streamlit run frontend/app.py
+   
+   On macOS/Linux:
+   export BACKEND_URL="https://your-backend-url.com"
+   streamlit run frontend/app.py
+
+DEPLOYMENT:
+
+Backend Deployment (Render.com):
+1. Create a Render account
+2. Connect your GitHub repository
+3. Create a new Web Service
+4. Set start command: uvicorn backend.main:app --host 0.0.0.0 --port 8000
+5. Add environment variable: GEMINI_API_KEY with your Gemini API key
+6. Deploy
+
+Frontend Deployment (Vercel):
+Note: Vercel doesn't support Streamlit directly. Use alternative cloud platform like Heroku, Railway, or Render for Streamlit frontend.
+
+Alternative: Deploy both on Render or Railway as Web Services with appropriate start commands.
+
+TROUBLESHOOTING:
+
+1. Backend connection error:
+   - Ensure backend is running on http://localhost:8000
+   - Check BACKEND_URL environment variable if using custom URL
+   - Verify firewall settings
+
+2. Gemini API errors:
+   - Verify GEMINI_API_KEY is set correctly
+   - Check API key has proper permissions
+   - Ensure you have credits/quota on Google Cloud
+
+3. Module not found errors:
+   - Run: pip install -r requirements.txt
+   - Ensure virtual environment is activated
+
+4. Port already in use:
+   - Backend: Change port in uvicorn.run() call
+   - Streamlit: Run with: streamlit run frontend/app.py --server.port 8502
+
+API DOCUMENTATION:
+
+Backend endpoints (http://localhost:8000):
+
+GET /health
+Returns service health status
+
+POST /generate_outline
+Input: {"topic": "string"}
+Output: {"status": "success", "outline": {...}}
+
+POST /generate_book
+Input: {"outline": {...}}
+Output: {"status": "success", "book": {...}}
+
+POST /export_book
+Input: {"book": {...}, "format": "docx|pdf"}
+Output: {"status": "success", "filename": "...", "filepath": "..."}
+
+NOTES:
+- Generated books are saved to /tmp directory on the server
+- All API calls timeout after 120-300 seconds (longer for book generation)
+- CORS is enabled for frontend communication
+- No database is used; all data is session-based
+- PDF generation uses ASCII-compatible text only
