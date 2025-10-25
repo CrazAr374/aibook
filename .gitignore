@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.env
+.venv/
+venv/
+
+# Editor
+.vscode/
+.idea/
+.DS_Store
+
+# Streamlit
+.streamlit/
+
+# System
+Thumbs.db
+
+# Byte-compiled
+*.pyc
+
+# Logs
+*.log
